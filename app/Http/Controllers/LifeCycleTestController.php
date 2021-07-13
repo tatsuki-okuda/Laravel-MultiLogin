@@ -15,7 +15,7 @@ class LifeCycleTestController extends Controller
         $password = $encrypt->encrypt('password');
         // 登録したサービスプロバイダーの呼び出し。
         $sample = app()->make('ServiceProviderTest');
-        
+
         // サービスコンテナで登録したものだと存在しないとエラーになってしまう。
         // $test = app()->make('lifeCycleTest');
 
