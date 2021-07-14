@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Owner; //eloquent
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB; // QueryBuilder
+
 
 class OwnersController extends Controller
 {
@@ -19,7 +23,24 @@ class OwnersController extends Controller
      */
     public function index()
     {
-        dd('オーナ');
+
+        /**
+         * CarbonはPHPの日付操作ライブラリでLAravelには標準で搭載されている。
+         * Elquentモデルでは標準でCarbonインスタンスとして日付データが変えるが、
+         * QueryBuilderではインスタンスになっていないので注意！
+         */
+        $date_now = Carbon::now();
+        $date_parce = Carbon::parse(now());
+
+        $e_all = Owner::all();
+        $q_get = DB::table('owners')->select('name', 'created_at')->get();
+        // $d_first = DB::table('owners')->select('name')->first();
+        // $c_test = collect([
+        //     'name' => 'テスト'
+        // ]);
+        // dd( $e_all, $d_get, $d_first, $c_test );
+       
+        return view('admin.owners.index', compact('e_all', 'q_get'));
     }
 
     /**
