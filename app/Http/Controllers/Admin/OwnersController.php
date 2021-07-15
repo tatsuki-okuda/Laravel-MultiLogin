@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB; // QueryBuilder
 
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Redirect;
 
 class OwnersController extends Controller
 {
@@ -45,7 +45,7 @@ class OwnersController extends Controller
         // return view('admin.owners.index', compact('e_all', 'q_get'));
 
         // 必要な情報だけをselecetする。
-        $owners = Owner::select('name', 'email', 'created_at')->get();
+        $owners = Owner::select('id', 'name', 'email', 'created_at')->get();
         return view('admin.owners.index', compact('owners'));
     }
 
@@ -104,7 +104,11 @@ class OwnersController extends Controller
      */
     public function edit($id)
     {
-        //
+        // なかったら404画面に飛ぶ
+        $owner = Owner::findOrFail($id);
+        // dd($owner);
+
+        return view('admin.owners.edit', compact('owner'));
     }
 
     /**
@@ -116,7 +120,15 @@ class OwnersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $owner = Owner::findOrFail($id);
+        $owner->name = $request->name;
+        $owner->email = $request->email;
+        $owner->password = Hash::make($request->password);
+        $owner->save();
+
+        return redirect()
+        ->route('admin.owners.index')
+        ->with('message', 'オーナーの情報を更新しました。');
     }
 
     /**
