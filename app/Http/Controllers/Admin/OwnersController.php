@@ -29,18 +29,22 @@ class OwnersController extends Controller
          * Elquentモデルでは標準でCarbonインスタンスとして日付データが変えるが、
          * QueryBuilderではインスタンスになっていないので注意！
          */
-        $date_now = Carbon::now();
-        $date_parce = Carbon::parse(now());
+        // $date_now = Carbon::now();
+        // $date_parce = Carbon::parse(now());
 
-        $e_all = Owner::all();
-        $q_get = DB::table('owners')->select('name', 'created_at')->get();
+        // $e_all = Owner::all();
+        // $q_get = DB::table('owners')->select('name', 'created_at')->get();
         // $d_first = DB::table('owners')->select('name')->first();
         // $c_test = collect([
         //     'name' => 'テスト'
         // ]);
         // dd( $e_all, $d_get, $d_first, $c_test );
        
-        return view('admin.owners.index', compact('e_all', 'q_get'));
+        // return view('admin.owners.index', compact('e_all', 'q_get'));
+
+        // 必要な情報だけをselecetする。
+        $owners = Owner::select('name', 'email', 'created_at')->get();
+        return view('admin.owners.index', compact('owners'));
     }
 
     /**
@@ -50,7 +54,7 @@ class OwnersController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.owners.create');
     }
 
     /**
