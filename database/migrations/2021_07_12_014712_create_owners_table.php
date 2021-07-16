@@ -21,6 +21,8 @@ class CreateOwnersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            // ソフトデリート
+            $table->softDeletes();
         });
     }
 
@@ -32,5 +34,6 @@ class CreateOwnersTable extends Migration
     public function down()
     {
         Schema::dropIfExists('owners');
+        
     }
 }
