@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Owner; //eloquent
+use App\Models\Shop;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB; // QueryBuilder
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 
 class OwnersController extends Controller
@@ -75,11 +77,35 @@ class OwnersController extends Controller
             'password' => ['required', 'confirmed'],
         ]);
 
-        $owner = Owner::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        // Ownerを作成すると自動でShopも作成される
+        // 二つのモデルを更新するのでtransactiondで整合性をとる
+        // https://readouble.com/laravel/8.x/ja/database.html#:~:text=bindings%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20//%20%24query-%3Etime%3B%0A%20%20%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%7D%0A%7D-,%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9,-%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3
+        // クロージャーの中で$requestを使える様にuseを使う
+        try {
+            DB::transaction(function ()  use($request) {
+                $owner = Owner::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                Shop::create([
+                    'owner_id' => $owner->id,
+                    'name' => '店名',
+                    'information' => '',
+                    'filename' => '',
+                    'is_selling' => true,
+                ]);
+
+            }, 2);
+
+            // PHPの機能使う時は頭にバックスラッシュか、useで読み込む
+        } catch (\Throwable $e) {
+            Log::error($e);
+            throw $e;
+        }
+
+       
 
         return redirect()
         ->route('admin.owners.index')
