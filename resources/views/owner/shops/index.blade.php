@@ -15,11 +15,11 @@
                         <div class="border rounded-md p-4">
                             <div class="mb-4">
                                 @if ($shop->is_selling)
-                                    <span class="border rounded-md bg-blue-400 ext-white">
+                                    <span class="border rounded-md bg-blue-400 text-white p-3">
                                         販売中
                                     </span>
                                 @else
-                                    <span class="border rounded-md bg-red-400 ext-white">
+                                    <span class="border rounded-md bg-red-400 text-white">
                                         停止中
                                     </span>
                                 @endif

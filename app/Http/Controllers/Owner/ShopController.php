@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use InterventionImage;
 
 class ShopController extends Controller
 {
@@ -63,11 +65,36 @@ class ShopController extends Controller
      */
     public function edit($id)
     {
-        dd(Shop::findOrFail($id));
+        // dd(Shop::findOrFail($id));
+        $shop = Shop::findOrFail($id);
+        return view('owner.shops.edit', compact('shop'));
     }
 
     public function update(Request $request, $id)
     {
-        
+        //一時保存
+        $imageFile = $request->image;
+
+        // リサイズなしのパターン
+        // if(!is_null($imageFile) && $imageFile->isValid() ){
+        //     // リサイズする時は型が変わるのでputFileは使えなくなるので注意
+        //     Storage::putFile('public/shops', $imageFile);
+        // }
+
+
+        // リサイズパターン
+        if(!is_null($imageFile) && $imageFile->isValid() ){
+            // ファイル名の作成
+            $fileName = uniqid(rand().'_');
+            $extension = $imageFile->extension();
+            $fileNameToStore = $fileName. '.' . $extension;
+            $resizedImage = InterventionImage::make($imageFile)
+                ->resize(1920, 1080)
+                ->encode();
+            // 型が違う
+            // dd($imageFile, $resizedImage);
+            Storage::put('public/shops/' . $fileNameToStore, $resizedImage );
+        }
+        return redirect()->route('owner.shops.index');
     }
 }
