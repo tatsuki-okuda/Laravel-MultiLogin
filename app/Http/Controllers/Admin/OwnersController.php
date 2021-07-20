@@ -105,7 +105,7 @@ class OwnersController extends Controller
             throw $e;
         }
 
-       
+
 
         return redirect()
         ->route('admin.owners.index')
