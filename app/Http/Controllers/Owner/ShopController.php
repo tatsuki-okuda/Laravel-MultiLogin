@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use InterventionImage;
+use App\Services\ImageService;
 
 class ShopController extends Controller
 {
@@ -85,16 +86,8 @@ class ShopController extends Controller
 
         // リサイズパターン
         if(!is_null($imageFile) && $imageFile->isValid() ){
-            // ファイル名の作成
-            $fileName = uniqid(rand().'_');
-            $extension = $imageFile->extension();
-            $fileNameToStore = $fileName. '.' . $extension;
-            $resizedImage = InterventionImage::make($imageFile)
-                ->resize(1920, 1080)
-                ->encode();
-            // 型が違う
-            // dd($imageFile, $resizedImage);
-            Storage::put('public/shops/' . $fileNameToStore, $resizedImage );
+            // 独自にサービスを作ってそこに共通化できるメソッドを格納する。
+            $fileNameToStore = ImageService::upload($imageFile, 'shops');
         }
         return redirect()->route('owner.shops.index');
     }
