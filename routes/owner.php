@@ -46,6 +46,8 @@ Route::resource('images', ImageController::class)
     // showメソッドをなしにする
     ->except(['show']);
 
+
+
 Route::get('/dashboard', function () {
     return view('owner.dashboard');
 })->middleware(['auth:owners'])->name('dashboard');
