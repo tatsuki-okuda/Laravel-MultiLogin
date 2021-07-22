@@ -14,16 +14,18 @@
                 <div class="flex justify-end mt-4">
                     <button onclick="location.href='{{ route('owner.images.create') }}' " class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">新規登録する</button>
                 </div>
-                @foreach ($images as $image)
-                    <div class="w-1/4 p-4">
-                        <a href="{{ route('owner.image.create', [ 'image' => $image->id ]) }}">
-                            <div class="border rounded-md p-4">
-                                <div class="text-xl">{{ $image->title }}</div>
-                                <x-thumbnail :filname="$image->filename" type="products"/>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
+                <div class="flex flex-wrap">
+                    @foreach ($images as $image)
+                        <div class="w-1/4 p-4">
+                            <a href="{{ route('owner.images.create', [ 'image' => $image->id ]) }}">
+                                <div class="border rounded-md p-4">
+                                    <div class="text-xl">{{ $image->title }}</div>
+                                    <x-thumbnail :filname="$image->filename" type="products"/>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
                 {{ $images->links() }}
                 </div>
             </div>
