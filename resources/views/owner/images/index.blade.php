@@ -24,6 +24,7 @@
                                 </div>
                             </a>
                         </div>
+                       
                     @endforeach
                 </div>
                 {{ $images->links() }}
@@ -31,4 +32,5 @@
             </div>
         </div>
     </div>
+   
 </x-app-layout>
