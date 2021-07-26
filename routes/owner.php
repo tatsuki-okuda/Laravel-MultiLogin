@@ -9,6 +9,7 @@ use App\Http\Controllers\Owner\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Owner\Auth\RegisteredUserController;
 use App\Http\Controllers\Owner\Auth\VerifyEmailController;
 use App\Http\Controllers\Owner\ImageController;
+use App\Http\Controllers\Owner\ProductController;
 use App\Http\Controllers\Owner\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,10 @@ Route::resource('images', ImageController::class)
     // showメソッドをなしにする
     ->except(['show']);
 
+Route::resource('product', ProductController::class)
+    ->middleware('auth:owners')
+    // showメソッドをなしにする
+    ->except(['show']);
 
 
 Route::get('/dashboard', function () {

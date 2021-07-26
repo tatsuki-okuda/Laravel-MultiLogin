@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UploadImageRequest;
 use App\Services\ImageService;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -85,16 +86,6 @@ class ImageController extends Controller
             ]);;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -104,7 +95,8 @@ class ImageController extends Controller
      */
     public function edit($id)
     {
-        //
+        $image = Image::findOrFail($id);
+        return view('owner.images.edit', compact('image'));
     }
 
     /**
@@ -116,8 +108,22 @@ class ImageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'string|max:50',
+        ]);
+
+        $image = Image::findOrFail($id);
+        $image->title = $request->title;
+        $image->save();
+
+        return redirect()
+            ->route('owner.images.index')
+            ->with([
+                'message' => '画像情報を更新しました。。',
+                'status' => 'info'
+            ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -127,6 +133,21 @@ class ImageController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // ストレージにあるファイルを削除する
+        $image = Image::findOrFail($id);
+        $filepath = 'public/products'. $image->filename;
+        // 念のため、対象のファイルが存在するかの確認をいれる
+        if(Storage::exists($image)){
+            Storage::delete($filepath);
+        }
+
+        Image::findOrFail($id)->delete();
+
+        return redirect()
+        ->route('owner.images.index')
+        ->with([
+            'message' => '画像を削除しました。',
+            'status' => 'alert',
+        ]);
     }
 }
