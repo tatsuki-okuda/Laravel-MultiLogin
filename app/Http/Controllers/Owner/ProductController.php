@@ -3,10 +3,34 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Owner;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+
+    /**
+     * construct
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:owners');
+        $this->middleware(function ($request, $next) {
+            $id = $request->route()->parameter('product');
+            if ( !is_null($id) ) {
+                $productOwnerId = Product::findOrFail($id)->shop->owner->id;
+                $iproductId = (int)$productOwnerId;
+                if ( $iproductId !== Auth::id() ) {
+                    abort(404);
+                }
+            }
+            return $next($request);
+        });
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +38,15 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        // ログインユーザーの🆔からオーナーを取得して、リレーションを介してproductを取得する、。
+        $products = Owner::findOrFail(Auth::id())->shop->product;
+
+        // N+!問題　eagerロード
+        $ownerInfo = Owner::with('shop.product.imageFirst')
+            ->where('id', Auth::id())
+            ->get();
+
+        return view('owner.products.index', compact('ownerInfo'));
     }
 
     /**
