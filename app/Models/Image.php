@@ -22,7 +22,8 @@ class Image extends Model
     ];
 
 
-    public function Owner()
+
+    public function owner()
     {
         return $this->belongsTo(Owner::class);
     }
