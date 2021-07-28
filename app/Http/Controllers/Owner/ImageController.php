@@ -65,12 +65,13 @@ class ImageController extends Controller
     public function store(UploadImageRequest $request)
     {
         // filesで複数のファイルを取得
+ 
+
         $imageFiles = $request->file('files');
         if(!is_null($imageFiles)){
             foreach($imageFiles as $imageFile){
-                // 画像のアップロード
                 $fileNameToStore = ImageService::upload($imageFile, 'products');
-                //　ファイル名を保存
+                // dd($fileNameToStore);
                 Image::create([
                     'owner_id' => Auth::id(),
                     'filename' => $fileNameToStore
@@ -80,10 +81,8 @@ class ImageController extends Controller
 
         return redirect()
             ->route('owner.images.index')
-            ->with([
-                'message' => '画像を保存しました。',
-                'status' => 'info'
-            ]);;
+            ->with(['message' => '画像登録を実施しました。',
+            'status' => 'info']);
     }
 
 
