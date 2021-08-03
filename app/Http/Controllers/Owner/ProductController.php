@@ -198,10 +198,11 @@ class ProductController extends Controller
                     $product->save();
 
                     // 在庫は追加か現状か
-                    if($request->type === '1'){
+                    // appに登録した定数を使用してわかりやすくする。
+                    if($request->type === \Constant::PRODUCT_LIST['add'] ){
                         $newQuantity =  $request->quantity;
                     }
-                    if($request->type === '2'){
+                    if($request->type === \Constant::PRODUCT_LIST['reduce'] ){
                         $newQuantity =  $request->quantity * -1;
                     }
     
