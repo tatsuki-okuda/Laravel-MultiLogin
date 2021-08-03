@@ -132,7 +132,7 @@
         document.getElementById(imageName + '_hidden').value = imageId
         MicroModal.close(modal);
     }, )
-    })  
+    })
 
     function deletePost(e) {
         'use strict';
