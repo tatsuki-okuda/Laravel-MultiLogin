@@ -17,7 +17,8 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/dashboard';
+    // public const HOME = '/dashboard';
+    public const HOME = '/';
     // マルチログインのそれぞれのリダイレクト先を定数で定義する。
     public const OWNER_HOME = 'owner/dashboard';
     public const ADMIN_HOME = 'admin/dashboard';
