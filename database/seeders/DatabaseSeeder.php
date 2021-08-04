@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Product;
 use Illuminate\Database\Seeder;
+use App\Models\Product;
+use App\Models\Stock;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,5 +26,9 @@ class DatabaseSeeder extends Seeder
             // StockSeeder::class,
             UserSeeder::class,
         ]);
+
+        // 外部制約あるやつは先にそのデータを作成してから作成すること！
+        Product::factory(100)->create();
+        Stock::factory(100)->create();
     }
 }
