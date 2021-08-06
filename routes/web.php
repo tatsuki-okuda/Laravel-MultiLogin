@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CompornentTestController;
 use App\Http\Controllers\LifeCycleTestController;
+use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ItemController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,10 +22,19 @@ Route::get('/', function () {
     return view('user.welcome');
 });
 
+
+
 Route::middleware('auth:users')
 ->group(function(){
     Route::get('/', [ItemController::class, 'index'])->name('items.index');
     Route::get('show/{item}', [ItemController::class, 'show'])->name('items.show');
+});
+
+Route::prefix('cart')
+->middleware('auth:users')
+->group(function(){
+    Route::post('add', [CartController::class, 'add'])
+    ->name('cart.add');
 });
 
 // Route::get('/dashboard', function () {
