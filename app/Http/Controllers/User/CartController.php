@@ -97,7 +97,7 @@ class CartController extends Controller
                 'quantity' => $product->pivot->quantity * -1,
             ]);
         }
-        dd('test');
+        // dd('test');
 
 
         // https://stripe.com/docs/checkout/integration-builder
