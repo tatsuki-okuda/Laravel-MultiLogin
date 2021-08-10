@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Stock;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,16 +70,35 @@ class CartController extends Controller
          */
         $lineItems = array();
         foreach($products as $product){
-            $linItem = [
-                'name' => $product->name,
-                'description' => $product->information,
-                'amount' => $product->price,
-                'currency' => 'jpy',
-                'quantity'  => $product->pivot->quantity
-            ];
-            array_push($lineItems, $linItem);
+            // 購入ボタンを押したら在庫を確認して、確保する、
+            $quantity = '';
+            $quantity = Stock::where('product_id',$product->id)->sum('quantity');
+
+            if($product->pivot->quantity > $quantity){
+                // 在庫数が足りない時はリダイレクトで戻す。
+                return redirect()->route('user.cart.index');
+            } else {
+                $linItem = [
+                    'name' => $product->name,
+                    'description' => $product->information,
+                    'amount' => $product->price,
+                    'currency' => 'jpy',
+                    'quantity'  => $product->pivot->quantity
+                ];
+                array_push($lineItems, $linItem);
+            }
         }
         // dd($lineItems);
+        // 　購入可能であれば決済前に在庫を減らす。
+        foreach($products as $product){
+            Stock::create([
+                'product_id' => $product->id,
+                'type' => \Constant::PRODUCT_LIST['reduce'],
+                'quantity' => $product->pivot->quantity * -1,
+            ]);
+        }
+        // dd('test');
+
 
         // https://stripe.com/docs/checkout/integration-builder
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
@@ -87,12 +107,19 @@ class CartController extends Controller
             'payment_method_types' => ['card',],
             'line_items' => [$lineItems],
             'mode' => 'payment',
-            'success_url' => route('user.items.index'),
+            'success_url' => route('user.cart.success'),
             'cancel_url' => route('user.cart.index'),
         ]);
 
         $publicKey = env('STRIPE_PUBLIC_KEY');
 
         return view('user.checkout', compact('session', 'publicKey'));
+    }
+
+
+    public function success()
+    {
+        Cart::where('user_id', Auth::id())->delete();
+        return redirect()->route('user.items.index');
     }
 }
