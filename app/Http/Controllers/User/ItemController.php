@@ -32,7 +32,7 @@ class ItemController extends Controller
         // モデルにscopeとしてqueryを登録する.
         $products = Product::availableItems()
             ->sortOrder($request->sort)
-            ->get();
+            ->paginate($request->pagination);
         // dd($stocks,$products);
         // $products = Product::all();
         return view('user.index', compact('products'));
