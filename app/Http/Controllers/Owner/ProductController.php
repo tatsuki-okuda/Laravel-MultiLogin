@@ -27,8 +27,8 @@ class ProductController extends Controller
             $id = $request->route()->parameter('product');
             if ( !is_null($id) ) {
                 $productOwnerId = Product::findOrFail($id)->shop->owner->id;
-                $iproductId = (int)$productOwnerId;
-                if ( $iproductId !== Auth::id() ) {
+                $productOwnerId = (int)$productOwnerId;
+                if ( $productOwnerId !== Auth::id() ) {
                     abort(404);
                 }
             }
