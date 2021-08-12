@@ -135,5 +135,14 @@ class Product extends Model
 
     }
 
+    public function scopeSelectCategory($request, $categoryId)
+    {
+        // 0は全て選択にしているのでそれ以外のときにqueryにwhereをつける
+        if($categoryId !== '0'){
+            return $request->where('secondary_category_id', $categoryId);
+        } else {
+            return ;
+        }
+    }
 
 }
