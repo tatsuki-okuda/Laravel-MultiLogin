@@ -30,12 +30,12 @@ class ItemController extends Controller
 
     public function index(Request $request)
     {
-        
         $categories = PrimaryCategory::with('secondary')->get();
         // モデルにscopeとしてqueryを登録する.
         $products = Product::availableItems()
             // 選んでなかったら初期値を入れる
             ->selectCategory($request->category ?? '0')
+            ->serchKeyword($request->keyword)
             ->sortOrder($request->sort)
             ->paginate($request->pagination ?? '20');
         // dd($stocks,$products);
