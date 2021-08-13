@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TestMail;
 use App\Models\PrimaryCategory;
 use App\Models\Product;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ItemController extends Controller
 {
@@ -30,6 +32,11 @@ class ItemController extends Controller
 
     public function index(Request $request)
     {
+        //メールの送信
+        Mail::to('test@exsample.com')
+            ->send(new TestMail());
+
+
         $categories = PrimaryCategory::with('secondary')->get();
         // モデルにscopeとしてqueryを登録する.
         $products = Product::availableItems()
