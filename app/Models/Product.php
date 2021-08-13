@@ -135,5 +135,37 @@ class Product extends Model
 
     }
 
+    public function scopeSelectCategory($request, $categoryId)
+    {
+        // 0は全て選択にしているのでそれ以外のときにqueryにwhereをつける
+        if($categoryId !== '0'){
+            return $request->where('secondary_category_id', $categoryId);
+        } else {
+            return ;
+        }
+    }
+
+
+    public function scopeSerchKeyword($query, $keyword)
+    {
+        if( !is_null($keyword) ){
+             //全角スペースを半角に
+            $spaceConvert = mb_convert_kana($keyword,'s');
+
+            //空白で区切る
+            $keywords = preg_split('/[\s]+/', $spaceConvert,-1,PREG_SPLIT_NO_EMPTY);
+
+            //単語をループで回す
+            foreach($keywords as $word)
+            {
+                $query->where('products.name','like','%'.$word.'%');
+            }
+
+            return $query;
+
+        } else {
+            return;
+        }
+    }
 
 }
