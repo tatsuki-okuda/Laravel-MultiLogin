@@ -41,7 +41,7 @@ class ItemController extends Controller
         // 非同期で送信
         // これでキューにjobを入れるだけなので
         // 別途workerを発火させる必要あり。
-        SendThanksMail::dispatch();
+        // SendThanksMail::dispatch();
 
 
         $categories = PrimaryCategory::with('secondary')->get();
