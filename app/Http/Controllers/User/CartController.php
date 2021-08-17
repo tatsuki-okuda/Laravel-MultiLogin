@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendOrderedMail;
 use App\Jobs\SendThanksMail;
 use App\Models\Cart;
 use App\Models\Stock;
@@ -70,7 +71,12 @@ class CartController extends Controller
         $user = User::findOrFail(Auth::id());
         // メールをキューに追加する。
         SendThanksMail::dispatch($products, $user);
-        dd('メール送信');
+
+        foreach($products as $product){
+            SendOrderedMail::dispatch($product, $user);
+        }
+
+        dd('test');
 
         $user = User::findOrFail(Auth::id());
         $products = $user->products;
@@ -123,12 +129,27 @@ class CartController extends Controller
 
         $publicKey = env('STRIPE_PUBLIC_KEY');
 
+        
+
         return view('user.checkout', compact('session', 'publicKey'));
     }
 
 
     public function success()
     {
+        // // ログインしているユーザーのカート情報を取得
+        // $items = Cart::where('user_id', Auth::id())->get();
+        // $products = cartService::getItemsCart($items);
+        // $user = User::findOrFail(Auth::id());
+        // // メールをキューに追加する。
+        // SendThanksMail::dispatch($products, $user);
+
+        // foreach($products as $product){
+        //     SendOrderedMail::dispatch($product, $user);
+        // }
+
+        // dd('メール送信');
+
         Cart::where('user_id', Auth::id())->delete();
         return redirect()->route('user.items.index');
     }
